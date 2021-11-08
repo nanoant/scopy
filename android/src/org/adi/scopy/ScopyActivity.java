@@ -31,10 +31,12 @@ import android.os.Bundle;
 
 public class ScopyActivity extends QtActivity
 {
+	public static native void saveSessionJavaHelper();
+
         @Override
         public void onCreate(Bundle savedInstanceState)
         {
-                super.onCreate(savedInstanceState);
+		super.onCreate(savedInstanceState);		//saveSessionJavaHelper();
         }
 
         @Override
@@ -46,10 +48,23 @@ public class ScopyActivity extends QtActivity
         @Override
         protected void onStop()
         {
-                super.onStop();
+	//	saveSession();
+                super.onStop();		
         }
 
+	protected void onPause(){
+	//    saveSession();
+	    saveSessionJavaHelper();
+	    super.onPause();
+	}
+
+	protected void onDestroy(){
+	//    saveSession();
+	    super.onPause();
+	}
+
 	public void restart() {
+	    saveSessionJavaHelper();
 	    System.out.println("-- ScopyActivity: Restarting ");
 	    Context context = getApplicationContext();
 	    PackageManager packageManager = context.getPackageManager();

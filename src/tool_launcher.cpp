@@ -122,9 +122,14 @@ ToolLauncher::ToolLauncher(QString prevCrashDump, QWidget *parent) :
 
 	ui->setupUi(this);
 
-#ifdef __ANDROID__
+
+#ifdef __ANDROID__ // LIBUSB WEAK_AUTHORITY
 	libusb_set_option(NULL,LIBUSB_OPTION_ANDROID_JAVAVM,jnienv->javaVM());
 	libusb_set_option(NULL,LIBUSB_OPTION_WEAK_AUTHORITY,NULL);
+#endif
+
+#ifdef __ANDROID__
+	registerNativeMethods();
 #endif
 
 	setWindowIcon(QIcon(":/icon.ico"));
@@ -487,6 +492,8 @@ void ToolLauncher::saveSession()
 		QString fileName = QFileDialog::getSaveFileName(this,
 								tr("Save session"), "", tr("Scopy-Files (*.ini)"),
 								nullptr, (m_useNativeDialogs ? QFileDialog::Options() : QFileDialog::DontUseNativeDialog));
+		QFileInfo fi(fileName);
+		qDebug()<<fi.absoluteFilePath();
 		if (!fileName.isEmpty()) {
 			this->tl_api->save(fileName);
 		}
@@ -600,14 +607,27 @@ void ToolLauncher::resetSession()
 
 void ToolLauncher::saveSettings()
 {
-	QSettings settings;
-	QFile tempFile(settings.fileName() + ".bak");
-	QSettings tempSettings(tempFile.fileName(), QSettings::IniFormat);
+	QSettings settings;	
+//	settings.clear();
 	QFile scopyFile(settings.fileName());
+	/*QFile tempFile(settings.fileName() + ".bak");
+	QSettings tempSettings(tempFile.fileName(), QSettings::IniFormat);
+	QFile scopyFile(settings.fileName());	
 	if (scopyFile.exists())
 		scopyFile.remove();
 	tempSettings.sync();
+	tempFile.open(QIODevice::ReadOnly);
+	qDebug()<<tempFile.readAll();
+	tempFile.close();
 	QFile::copy(tempFile.fileName(), scopyFile.fileName());
+	scopyFile.open(QIODevice::ReadOnly);
+	qDebug()<<scopyFile.readAll();
+	scopyFile.close();*/
+	settings.sync();	
+	QString sanityCheckLocation = QStandardPaths::writableLocation(QStandardPaths::DownloadLocation)+"/"+"settings.ini";
+	QFile::copy(scopyFile.fileName(),sanityCheckLocation);
+
+	qDebug()<<"Settings dumped to: " + sanityCheckLocation;
 }
 
 void ToolLauncher::runProgram(const QString& program, const QString& fn)
@@ -1988,3 +2008,27 @@ bool ToolLauncher::eventFilter(QObject *watched, QEvent *event)
 
 	return QObject::eventFilter(watched, event);
 }
+
+#ifdef __ANDROID__
+
+void ToolLauncher::saveSessionJavaHelper(JNIEnv *env, jobject /*thiz*/) {
+	qDebug()<<"-- Saving session";
+	getToolLauncherInstance()->tl_api->sync();
+	getToolLauncherInstance()->saveSettings();
+}
+
+void ToolLauncher::registerNativeMethods()
+{
+	JNINativeMethod methods[] = {{"saveSessionJavaHelper", "()V", reinterpret_cast<void*>(saveSessionJavaHelper) }};
+
+
+	QAndroidJniObject activity = QtAndroid::androidActivity();
+	QAndroidJniEnvironment env;
+	jclass objectClass = env->GetObjectClass(activity.object<jobject>());
+
+	env->RegisterNatives(objectClass,
+						 methods,
+						 sizeof(methods) / sizeof(methods[0]));
+	env->DeleteLocalRef(objectClass);
+}
+#endif
