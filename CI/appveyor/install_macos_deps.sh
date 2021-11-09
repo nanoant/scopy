@@ -24,6 +24,14 @@ cd ~
 WORKDIR=${PWD}
 NUM_JOBS=4
 
+if [ "$APPVEYOR" == "true" ] ; then
+	MACOS_VERSION=$(/usr/libexec/PlistBuddy -c "Print:ProductVersion" /System/Library/CoreServices/SystemVersion.plist)
+	if [[ "$MACOS_VERSION" == "10.14."* ]] ; then
+		sudo rm -rf /Library/Developer/CommandLineTools
+		sudo xcode-select --install
+	fi
+fi
+
 brew update
 brew search ${QT_FORMULAE}
 brew_install_or_upgrade() {
