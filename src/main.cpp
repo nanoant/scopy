@@ -48,10 +48,13 @@ int main(int argc, char **argv)
 #ifdef  __ANDROID__
 	qputenv("QT_SCALE_FACTOR", "1.17");
 	QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+	QApplication::setAttribute(Qt::AA_CompressHighFrequencyEvents, true);
+	QApplication::setAttribute(Qt::AA_CompressTabletEvents, true);
 #endif
 
 
 	ScopyApplication app(argc, argv);
+	qDebug()<<QApplication::testAttribute(Qt::AA_CompressHighFrequencyEvents) << QApplication::testAttribute(Qt::AA_CompressHighFrequencyEvents);
 #ifdef LIBM2K_ENABLE_LOG
 	enableLogging(true);
 	google::InitGoogleLogging(argv[0]);

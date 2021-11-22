@@ -222,7 +222,7 @@ void FftDisplayPlot::replot()
 	d_leftHandlesArea->repaint();
 	d_bottomHandlesArea->repaint();
 
-	QwtPlot::replot();
+	FreeRunningPlot::replot();
 }
 
 bool FftDisplayPlot::isReferenceWaveform(unsigned int chnIdx)

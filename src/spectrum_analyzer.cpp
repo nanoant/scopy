@@ -1787,6 +1787,7 @@ void SpectrumAnalyzer::runStopToggled(bool checked)
 		fft_plot->resetAverageHistory();
 	}
 	m_running = checked;
+	fft_plot->startStop(checked);
 }
 
 void SpectrumAnalyzer::build_gnuradio_block_chain()

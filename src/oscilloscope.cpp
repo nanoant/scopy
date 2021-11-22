@@ -2883,6 +2883,8 @@ void Oscilloscope::runStopToggled(bool checked)
 
 	// Update trigger status
 	m_running = checked;
+	plot.startStop(checked);
+
 	triggerUpdater->setEnabled(checked);
 }
 
