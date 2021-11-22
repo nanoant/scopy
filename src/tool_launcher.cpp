@@ -1199,7 +1199,7 @@ void adiscope::ToolLauncher::ping()
 
 	int ret = iio_device_get_trigger(dev, &test_device);
 
-	if (ret < 0 && ret != -ENOENT) {
+	if (ret < 0 && ret != -ENOENT && ret != -19) {
 		disconnect();
 	}
 }
@@ -1702,8 +1702,8 @@ bool adiscope::ToolLauncher::switchContext(const QString& uri)
 				search_timer->stop();
 
 				QMessageBox info(this);
-				info.setText(tr("Digital decoders support is disabled. Some features may be missing"));
-				info.exec();
+				//info.setText(tr("Digital decoders support is disabled. Some features may be missing"));
+				//info.exec();
 			} else {
 
 				bool success = loadDecoders("decoders");

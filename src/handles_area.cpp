@@ -65,12 +65,17 @@ void HandlesArea::mouseReleaseEvent(QMouseEvent *)
 
 void HandlesArea::mouseMoveEvent(QMouseEvent *event)
 {
+	QElapsedTimer t;
+	t.start();
+	qDebug("Handles moved");
 	if (selectedItem) {
 		int x = event->pos().x() - hotspot.x();
 		int y = event->pos().y() - hotspot.y();
 
 		selectedItem->moveWithinParent(x, y);
 	}
+	event->accept();
+	qDebug()<<"Handles stop"<<QString::number(t.elapsed());
 }
 
 void HandlesArea::resizeEvent(QResizeEvent *event)

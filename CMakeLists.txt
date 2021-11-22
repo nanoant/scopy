@@ -150,9 +150,9 @@ if (NOT CMAKE_BUILD_TYPE)
 	set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS None Debug Release RelWithDebInfo MinSizeRel)
 endif()
 
-if (NOT "${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
-	add_definitions(-DQT_NO_DEBUG_OUTPUT=1)
-endif()
+#if (NOT "${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
+#	add_definitions(-DQT_NO_DEBUG_OUTPUT=1)
+#endif()
 
 list(FIND CMAKE_CXX_COMPILE_FEATURES cxx_constexpr OUT_CONSTEXPR)
 if (NOT "${OUT_CONSTEXPR}" STREQUAL "-1")

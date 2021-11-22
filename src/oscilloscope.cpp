@@ -40,6 +40,7 @@
 #include <QSignalBlocker>
 #include <QComboBox>
 #include <QDockWidget>
+#include <QElapsedTimer>
 
 /* libm2k includes */
 #include <libm2k/contextbuilder.hpp>
@@ -3722,6 +3723,8 @@ void adiscope::Oscilloscope::onVertOffsetValueChanged(double value)
 void adiscope::Oscilloscope::onTimePositionChanged(double value)
 {
 	cancelZoom();
+	QElapsedTimer t;
+	t.start();
 
 	bool started = isIioManagerStarted();
 	bool enhancedMemDepth = symmBufferMode->isEnhancedMemDepth();
@@ -3753,11 +3756,16 @@ void adiscope::Oscilloscope::onTimePositionChanged(double value)
 
 	// Realign plot data based on the new time position
 	plot.setHorizOffset(value);
+	qDebug()<<"1" << t.elapsed();
 	time_trigger_offset = value;
 
 	plot.setXAxisNumPoints(plot_samples_sequentially ? active_plot_sample_count : 0);
+	qDebug()<<"2" << t.elapsed();
 	plot.realignReferenceWaveforms(timeBase->value(), timePosition->value());
 	plot.replot();
+	qDebug()<<"3" << t.elapsed();
+
+
 	plot.setDataStartingPoint(active_trig_sample_count);
 	plot.resetXaxisOnNextReceivedData();
 
@@ -3772,6 +3780,7 @@ void adiscope::Oscilloscope::onTimePositionChanged(double value)
 			setDigitalPlotCurvesParams();
 		}
 	}
+
 	updateBufferPreviewer();
 	if (reset_horiz_offset) {
 		horiz_offset = value;
@@ -3779,6 +3788,7 @@ void adiscope::Oscilloscope::onTimePositionChanged(double value)
 
 	if (active_sample_rate == getSampleRate() &&
 			(active_plot_sample_count == oldSampleCount)) {
+		qDebug()<<" 1 "<<QString::number(t.elapsed());		
 		return;
 	}
 
@@ -3838,6 +3848,7 @@ void adiscope::Oscilloscope::onTimePositionChanged(double value)
 	fft_plot_size = pow(2, power);
 	fft_size = active_sample_count;
 	onFFT_view_toggled(fft_is_visible);
+	qDebug()<<" - 2"<<QString::number(t.elapsed());
 }
 
 void adiscope::Oscilloscope::rightMenuFinished(bool opened)

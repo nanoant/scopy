@@ -5,7 +5,7 @@ namespace adiscope {
 static int idHelper = 0;
 FreeRunningPlot::FreeRunningPlot(QWidget* parent) : QwtPlot(parent), started(false), refreshRate(25)
 {
-	qDebug()<<"Created freerunning plot";
+	qDebug()<<QString::number(id)<<"Created freerunning plot";
 	id = idHelper;
 	idHelper++;
 
@@ -13,7 +13,7 @@ FreeRunningPlot::FreeRunningPlot(QWidget* parent) : QwtPlot(parent), started(fal
 }
 
 void FreeRunningPlot::start() {
-	qDebug()<<"Starting freerunning plot";
+	qDebug()<<QString::number(id)<<"Starting freerunning plot";
 	started = true;
 	refreshTimer.setSingleShot(false);
 	qDebug()<<refreshTimer.interval();
@@ -34,7 +34,7 @@ bool FreeRunningPlot::isStarted() {
 	return started;
 }
 void FreeRunningPlot::stop() {
-	qDebug()<<"FreeRunningPlot - Stopping freerunning plot - will force one replot";
+	qDebug()<<QString::number(id)<<"FreeRunningPlot - Stopping freerunning plot - will force one replot";
 	started = false;
 	refreshTimer.stop();
 	drawPlot();
@@ -61,11 +61,11 @@ void FreeRunningPlot::replot() {
 	bool singleShot = refreshTimer.isSingleShot();
 	if(!started && !singleShot) {
 		// not started - schedule a plot next frame
-		qDebug()<<"FreeRunningPlot - freerunning plot not started - schedule next frame";
+		qDebug()<<QString::number(id)<<"FreeRunningPlot - freerunning plot not started - schedule next frame";
 		refreshTimer.setSingleShot(true);
 		refreshTimer.start(1000.0/refreshRate);
 	} else {
-		//qDebug()<<"FreeRunningPlot - freerunning already started";
+		//qDebug()<<QString::number(id)<<"FreeRunningPlot - freerunning already started";
 		//QwtPlot::replot();
 		//refreshTimer.setSingleShot(false);
 	}
