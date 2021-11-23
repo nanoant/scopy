@@ -822,29 +822,6 @@ Attenuation</string>
               </item>
               <item>
                <widget class="QComboBox" name="probe_attenuation">
-                <property name="currentIndex">
-                 <number>1</number>
-                </property>
-                <item>
-                 <property name="text">
-                  <string>0.1X</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>1X</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>10X</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>100X</string>
-                 </property>
-                </item>
                </widget>
               </item>
              </layout>

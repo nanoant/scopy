@@ -796,9 +796,10 @@ Oscilloscope::Oscilloscope(struct iio_context *ctx, Filter *filt,
 
 	connect(ch_ui->probe_attenuation, QOverload<int>::of(&QComboBox::currentIndexChanged),
 		[=](int index){
-		double value = 0.1 * (std::pow(10, index));
 
+		double value = m_probeAttenuationValues.at(index);
 		probe_attenuation[current_ch_widget] = value;
+
 		if (current_channel == current_ch_widget) {
 			plot.setDisplayScale(probe_attenuation[current_ch_widget]);
 		}
@@ -1601,6 +1602,18 @@ void Oscilloscope::init_channel_settings()
 			add_ref_waveform(qname, xData, yData, active_sample_rate);
 		}
 	});
+	initProbeAttenuation();
+}
+
+void Oscilloscope::initProbeAttenuation(){
+	m_probeAttenuationValues = {0.1, 0.2, 0.5, 1, 2, 5, 10, 20, 50, 100, 200, 500};
+
+	for(int i=0; i<m_probeAttenuationValues.size(); i++){
+		ch_ui->probe_attenuation->insertItem(i,(QString::number(m_probeAttenuationValues.at(i)) + "x"));
+	}
+
+	ch_ui->probe_attenuation->setCurrentIndex(3);
+
 }
 
 void Oscilloscope::activateAcCoupling(int i)
@@ -4011,13 +4024,11 @@ void Oscilloscope::update_chn_settings_panel(int id)
 		ch_ui->cmbMemoryDepth->setVisible(false);
 		ch_ui->btnAutoset->setVisible(false);
 	} else {
-		int index = 0;
-		double value = probe_attenuation[id];
 
-		while (value > 0.1) {
-			value /= 10;
-			index++;
-		}
+		double value = probe_attenuation[id];
+		int index = m_probeAttenuationValues.indexOf(value);
+
+
 		ch_ui->probe_attenuation->setCurrentIndex(index);
 		ch_ui->probe_attenuation->setVisible(true);
 		ch_ui->probe_label->setVisible(true);
