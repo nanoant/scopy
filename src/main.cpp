@@ -48,6 +48,8 @@ int main(int argc, char **argv)
 #ifdef  __ANDROID__
 	qputenv("QT_SCALE_FACTOR", "1.17");
 	QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+
+	qputenv("QT_USE_ANDROID_NATIVE_DIALOGS", "0");
 #endif
 
 
