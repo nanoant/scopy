@@ -77,6 +77,10 @@ class Debugger;
 class ManualCalibration;
 class UserNotes;
 
+
+extern ToolLauncher* tl_ptr;
+ToolLauncher* getToolLauncherInstance();
+
 class ToolLauncher : public QMainWindow
 {
 	friend class ToolLauncher_API;
