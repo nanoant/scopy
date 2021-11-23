@@ -105,6 +105,7 @@ public:
 	void setNativeDialogs(bool nativeDialogs);
 
 	PhoneHome *getPhoneHome() const;
+	enum tool getSelectedToolId() const;
 
 Q_SIGNALS:
 	void connectionDone(bool success);
@@ -288,6 +289,9 @@ private:
 	PhoneHome* m_phoneHome;
 
 	SessionInfo m_sessionInfo;
+	enum tool selectedToolId;
+
+
 };
 }
 #endif // M2K_TOOL_LAUNCHER_H

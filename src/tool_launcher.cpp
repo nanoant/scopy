@@ -1899,6 +1899,10 @@ void ToolLauncher::toolDetached(bool detached)
 	tool->setMinimumSize(910, 490);
 }
 
+enum tool ToolLauncher::getSelectedToolId() const {
+	return selectedToolId;
+}
+
 
 
 void ToolLauncher::closeEvent(QCloseEvent *event)
