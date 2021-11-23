@@ -279,12 +279,7 @@ Preferences::Preferences(QWidget *parent) :
 		} else {
 			m_colorEditor->setCurrentStylesheet(stylesheet);
 
-			// force saving of the ini file as the new Scopy process
-			// when restarted will start before scopy closes. A race condition
-			// will appear on who gets to read/write to the .ini file first
-			QString preference_ini_file = getPreferenceIniFile();
-			QSettings settings(preference_ini_file, QSettings::IniFormat);
-			pref_api->save(settings);
+			forceSavePreferences();
 
 			requestRestart();
 		}
@@ -429,6 +424,16 @@ void Preferences::resetScopy()
 	if (ret == QMessageBox::Ok) {
 		Q_EMIT reset();
 	}
+}
+
+void Preferences::forceSavePreferences()
+{
+	// force saving of the ini file as the new Scopy process
+	// when restarted will start before scopy closes. A race condition
+	// will appear on who gets to read/write to the .ini file first
+	QString preference_ini_file = getPreferenceIniFile();
+	QSettings settings(preference_ini_file, QSettings::IniFormat);
+	pref_api->save(settings);
 }
 
 bool Preferences::getDigital_decoders_enabled() const
