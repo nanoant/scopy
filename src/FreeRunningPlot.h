@@ -5,6 +5,8 @@
 #include <qwt_plot.h>
 #include <qwt_plot_renderer.h>
 #include <qwt_legend.h>
+#include <qwt_plot_canvas.h>
+#include <qwt_scale_engine.h>
 
 /*Qt includes*/
 #include <QObject>

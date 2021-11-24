@@ -3,13 +3,18 @@
 
 namespace adiscope {
 static int idHelper = 0;
-FreeRunningPlot::FreeRunningPlot(QWidget* parent) : QwtPlot(parent), started(false), refreshRate(25)
+FreeRunningPlot::FreeRunningPlot(QWidget* parent) : QwtPlot(parent), started(false), refreshRate(60)
 {
 	qDebug()<<QString::number(id)<<"Created freerunning plot";
 	id = idHelper;
 	idHelper++;
 
 	connect(&refreshTimer,SIGNAL(timeout()),this,SLOT(drawPlot()));
+	QwtPlotCanvas *plotCanvas = qobject_cast<QwtPlotCanvas *>( canvas() );
+	//plotCanvas->setPaintAttribute(QwtPlotCanvas::BackingStore );
+	plotCanvas->setPaintAttribute(QwtPlotCanvas::ImmediatePaint, false);	
+	//plotCanvas->setPaintAttribute(QwtPlotCanvas::OpenGLBuffer );
+	drawPlot();
 }
 
 void FreeRunningPlot::start() {
@@ -56,8 +61,8 @@ void FreeRunningPlot::drawPlot() {
 	QwtPlot::replot();
 }
 
-void FreeRunningPlot::replot() {
 
+void FreeRunningPlot::replot() {
 	bool singleShot = refreshTimer.isSingleShot();
 	if(!started && !singleShot) {
 		// not started - schedule a plot next frame
@@ -65,7 +70,8 @@ void FreeRunningPlot::replot() {
 		refreshTimer.setSingleShot(true);
 		refreshTimer.start(1000.0/refreshRate);
 	} else {
-		//qDebug()<<QString::number(id)<<"FreeRunningPlot - freerunning already started";
+		//qDebug()<<QString::number(id)<<"FreeRunningPlot - freerunning already started - updating axes";
+	//	qDebug()<<QString::number(id)<<"FreeRunningPlot - freerunning already started";
 		//QwtPlot::replot();
 		//refreshTimer.setSingleShot(false);
 	}
