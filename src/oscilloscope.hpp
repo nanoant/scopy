@@ -498,8 +498,6 @@ namespace adiscope {
 		mixed_signal_sink::sptr mixed_sink;
 		QMetaObject::Connection showLogicAnalyzerTriggerConnection;
 
-		void initProbeAttenuation();
-		QVector<double> m_probeAttenuationValues;
 	};
 }
 #endif /* M2K_OSCILLOSCOPE_H */
