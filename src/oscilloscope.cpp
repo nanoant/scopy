@@ -148,7 +148,8 @@ Oscilloscope::Oscilloscope(struct iio_context *ctx, Filter *filt,
 	m_filtering_enabled(true),
 	m_logicAnalyzer(nullptr),
 	m_mixedSignalViewEnabled(false),
-	logic_top_block(nullptr)
+	logic_top_block(nullptr),
+	m_updateActiveCh(false)
 {
 	ui->setupUi(this);
 	int triggers_panel = ui->stackedWidget->insertWidget(-1, &trigger_settings);
@@ -797,7 +798,9 @@ Oscilloscope::Oscilloscope(struct iio_context *ctx, Filter *filt,
 
 	connect(ch_ui->probe_attenuation_value, &QLineEdit::textChanged, this, [=](){
 		double value = ch_ui->probe_attenuation_value->text().toDouble();
-		probe_attenuation[current_ch_widget] = value;
+		if(m_updateActiveCh){
+			probe_attenuation[current_ch_widget] = value;
+		}
 
 		if (current_channel == current_ch_widget) {
 			plot.setDisplayScale(probe_attenuation[current_ch_widget]);
@@ -4012,6 +4015,7 @@ void Oscilloscope::update_chn_settings_panel(int id)
 		ch_ui->cmbMemoryDepth->setVisible(false);
 		ch_ui->btnAutoset->setVisible(false);
 	} else {
+		m_updateActiveCh = id == current_channel;
 		ch_ui->probe_attenuation_value->setText(QString::number(probe_attenuation[id]));
 		ch_ui->probe_attenuation_value->setVisible(true);
 		ch_ui->probe_label->setVisible(true);

@@ -409,6 +409,7 @@ namespace adiscope {
 		QQueue<QPair<CustomPushButton *, bool>> menuButtonActions;
 
 		QVector<double> probe_attenuation;
+		bool m_updateActiveCh;
 
 		void writeAllSettingsToHardware();
 
