@@ -111,6 +111,10 @@ find_package(Qt5Widgets REQUIRED)
 find_package(Qt5 COMPONENTS LinguistTools REQUIRED)
 find_package(Qt5Concurrent REQUIRED)
 find_package(Qt5Network REQUIRED)
+
+option(WITH_ADVANCED_DOCKING "Enable advanced docking system" ON)
+message(STATUS WITH_ADVANCED_DOCKING - ${WITH_ADVANCED_DOCKING})
+
 if(ANDROID)
 	find_package(Qt5AndroidExtras REQUIRED)
 endif()
@@ -468,6 +472,10 @@ target_link_libraries(${PROJECT_NAME} LINK_PRIVATE
 		libm2k::libm2k
 )
 
+if (WITH_ADVANCED_DOCKING)
+	target_link_libraries(${PROJECT_NAME} LINK_PRIVATE ads::qtadvanceddocking)
+endif()
+
 if (NOT WIN32)
 	find_library(PTHREAD_LIBRARIES pthread)
 	if (PTHREAD_LIBRARIES)
@@ -531,6 +539,19 @@ configure_file(scopy.iss.cmakein ${CMAKE_CURRENT_BINARY_DIR}/scopy.iss @ONLY)
 configure_file(scopy-32.iss.cmakein ${CMAKE_CURRENT_BINARY_DIR}/scopy-32.iss @ONLY)
 configure_file(scopy-64.iss.cmakein ${CMAKE_CURRENT_BINARY_DIR}/scopy-64.iss @ONLY)
 configure_file(config.h.cmakein ${CMAKE_CURRENT_BINARY_DIR}/config.h @ONLY)
+
+if (WITH_ADVANCED_DOCKING)
+	find_package(qtadvanceddocking REQUIRED)
+	set(ADVANCED_DOCKING_BOOL 1)
+
+	file(STRINGS ${CMAKE_CURRENT_BINARY_DIR}/config.h configLines)
+	list(INSERT configLines 2 "#define ADVANCED_DOCKING	${ADVANCED_DOCKING_BOOL}")
+
+	file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/config.h "")
+	foreach(line ${configLines})
+		file(APPEND ${CMAKE_CURRENT_BINARY_DIR}/config.h ${line}\n)
+	endforeach()
+endif()
 
 if (NOT ENABLE_APPLICATION_BUNDLE)
 	install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION bin)
