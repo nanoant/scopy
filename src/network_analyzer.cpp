@@ -53,7 +53,6 @@
 #include <QDateTime>
 #include <QSignalBlocker>
 #include <QImageWriter>
-#include <QDockWidget>
 
 #include <iio.h>
 #include <network_analyzer_api.hpp>
@@ -423,8 +422,7 @@ NetworkAnalyzer::NetworkAnalyzer(struct iio_context *ctx, Filter *filt,
 
 	m_phaseGraph.setVertCursorsHandleEnabled(false);
 
-	// Add dockable plot
-
+	// Add the plot
 	QWidget* widget = new QWidget(this);
 	QGridLayout* gridLayout = new QGridLayout(widget);
 	gridLayout->setVerticalSpacing(0);
@@ -446,23 +444,16 @@ NetworkAnalyzer::NetworkAnalyzer(struct iio_context *ctx, Filter *filt,
 
 	widget->setLayout(gridLayout);
 
+#ifdef ADVANCED_DOCKING
+	auto dockManager = DockerUtils::createCDockManager(this);
 
-	QMainWindow* m_centralMainWindow = new QMainWindow(this);
-	m_centralMainWindow->setCentralWidget(0);
-	m_centralMainWindow->setWindowFlags(Qt::Widget);
-	ui->gridLayout_plots->addWidget(m_centralMainWindow, 0, 0);
+	ui->gridLayout_plots->addWidget(dockManager, 0, 0);
 
-	QDockWidget* docker = new QDockWidget(m_centralMainWindow);
-	docker->setFeatures(docker->features() & ~QDockWidget::DockWidgetClosable);
-	docker->setAllowedAreas(Qt::AllDockWidgetAreas);
-	docker->setWidget(widget);
-
-#ifdef PLOT_MENU_BAR_ENABLED
-	DockerUtils::configureTopBar(docker);
+	auto dockWidget = DockerUtils::createCDockWidget(dockManager, widget);
+	dockManager->addDockWidget(ads::CenterDockWidgetArea, dockWidget);
+#else
+	ui->gridLayout_plots->addWidget(widget, 0, 0);
 #endif
-
-	m_centralMainWindow->addDockWidget(Qt::LeftDockWidgetArea, docker);
-
 
 	m_phaseGraph.enableXaxisLabels();
 	m_dBgraph.enableXaxisLabels();

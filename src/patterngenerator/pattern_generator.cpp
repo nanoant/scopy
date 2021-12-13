@@ -22,7 +22,6 @@
 #include "pattern_generator.h"
 
 #include <QDebug>
-#include <QDockWidget>
 #include "ui_pattern_generator.h"
 #include "digitalchannel_manager.hpp"
 #include "gui/dynamicWidget.hpp"
@@ -253,23 +252,16 @@ void PatternGenerator::setupUi()
 	gridLayout->addWidget(m_plot.bottomHandlesArea(), 3, 0, 1, 4);
 	gridLayout->addItem(plotSpacer, 4, 0, 1, 4);
 
+#ifdef ADVANCED_DOCKING
+	auto dockManager = DockerUtils::createCDockManager(this);
 
-	QMainWindow* m_centralMainWindow = new QMainWindow(this);
-	m_centralMainWindow->setCentralWidget(0);
-	m_centralMainWindow->setWindowFlags(Qt::Widget);
-	m_ui->gridLayoutPlot->addWidget(m_centralMainWindow, 1, 0, 1, 1);
+	m_ui->gridLayoutPlot->addWidget(dockManager, 0, 0, 1, 1);
 
-	QDockWidget* docker = new QDockWidget(m_centralMainWindow);
-	docker->setFeatures(docker->features() & ~QDockWidget::DockWidgetClosable);
-	docker->setAllowedAreas(Qt::AllDockWidgetAreas);
-	docker->setWidget(widget);
-
-#ifdef PLOT_MENU_BAR_ENABLED
-	DockerUtils::configureTopBar(docker);
+	auto dockWidget = DockerUtils::createCDockWidget(dockManager, widget);
+	dockManager->addDockWidget(ads::CenterDockWidgetArea, dockWidget);
+#else
+	m_ui->gridLayoutPlot->addWidget(widget, 0, 0, 1, 1);
 #endif
-
-
-	m_centralMainWindow->addDockWidget(Qt::LeftDockWidgetArea, docker);
 
 	// TODO: do we want the buffer previewer in this tool?
 	m_ui->hLayoutBufferPreview->hide();

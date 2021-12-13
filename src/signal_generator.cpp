@@ -33,7 +33,6 @@
 #include <QPalette>
 #include <QSharedPointer>
 #include <QElapsedTimer>
-#include <QDockWidget>
 
 #include <gnuradio/analog/sig_source.h>
 #include <gnuradio/analog/sig_source_waveform.h>
@@ -603,8 +602,7 @@ SignalGenerator::SignalGenerator(struct iio_context *_ctx, Filter *filt,
 
 	m_plot->enableTimeTrigger(false);
 
-	// Add docking plot
-
+	// Add the plot
 	QWidget* widget = new QWidget();
 	QGridLayout *gridplot = new QGridLayout();
 
@@ -619,22 +617,16 @@ SignalGenerator::SignalGenerator(struct iio_context *_ctx, Filter *filt,
 
 	ui->plot->removeWidget(ui->instrumentNotes);
 
-	QMainWindow* m_centralMainWindow = new QMainWindow(this);
-	m_centralMainWindow->setCentralWidget(0);
-	m_centralMainWindow->setWindowFlags(Qt::Widget);
-	ui->plot->addWidget(m_centralMainWindow, 0, 0);
+#ifdef ADVANCED_DOCKING
+	auto dockManager = DockerUtils::createCDockManager(this);
 
-	QDockWidget* docker = new QDockWidget(m_centralMainWindow);
-	docker->setFeatures(docker->features() & ~QDockWidget::DockWidgetClosable);
-	docker->setAllowedAreas(Qt::AllDockWidgetAreas);
-	docker->setWidget(widget);
-	docker->setContentsMargins(0, 0, 0, 10);
+	ui->plot->addWidget(dockManager, 0, 0);
 
-#ifdef PLOT_MENU_BAR_ENABLED
-	DockerUtils::configureTopBar(docker);
+	auto dockWidget = DockerUtils::createCDockWidget(dockManager, widget);
+	dockManager->addDockWidget(ads::CenterDockWidgetArea, dockWidget);
+#else
+	ui->plot->addWidget(widget, 0, 0);
 #endif
-
-	m_centralMainWindow->addDockWidget(Qt::LeftDockWidgetArea, docker);
 
 	ui->plot->addWidget(ui->instrumentNotes, 3, 0);
 }

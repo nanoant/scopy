@@ -45,6 +45,10 @@
 #include <QMap>
 #include <QQueue>
 
+#ifdef ADVANCED_DOCKING
+#include <DockWidget.h>
+#endif
+
 /* Local includes */
 #include "apiObject.hpp"
 #include "oscilloscope_plot.hpp"
@@ -313,9 +317,12 @@ namespace adiscope {
 		CustomPlotPositionButton *cursorsPositionButton;
 
 		QGridLayout* gridPlot;
-		QDockWidget* fftDocker;
-		QDockWidget* xyDocker;
-		QDockWidget* histDocker;
+#ifdef ADVANCED_DOCKING
+		ads::CDockManager* m_dockManager;
+		ads::CDockWidget* fftDocker;
+		ads::CDockWidget* xyDocker;
+		ads::CDockWidget* histDocker;
+#endif
 		QWidget* histWidget;
 
 		MouseWheelWidgetGuard *wheelEventGuard;
